@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>aaaaaaaa</title>
+</head>
+<body>
+
+</body>
+<script>
+
+
+    //////////////////探究promise执行顺序的问题
+
+    // console.log(1);
+    // // setTimeout(function(){
+    // //     console.log(3)
+    // // },1)
+    // setTimeout(function(){
+    //     console.log(2)
+    // },0)
+    // // Promise.resolve().then(function () {
+    // //     console.log('77')
+    // // }).then(function () {
+    // //     console.log(5);
+    // // })
+    //
+    //
+    // // Promise.resolve().then(function () {     //Promise.resolve()这部分是立即执行的，then要等一波
+    // //     console.log('77')
+    // //     Promise.resolve().then(function () {
+    // //         console.log(3)
+    // //         setTimeout(function(){
+    // //             console.log(33333333333)
+    // //         },0)
+    // //     }).then(
+    // //         function () {
+    // //             console.log(4);
+    // //         }).then(function () {
+    // //         console.log(4444444);
+    // //     })
+    // // }).then(function () {
+    // //     console.log(5);
+    // // }).then(function () {
+    // //     console.log(5555555);
+    // // })
+
+    // Promise.resolve(console.log("resolve 11111"))
+    //        .then(function () {     //Promise.resolve()这部分是立即执行的，then要等一波
+    //                  console.log('77')
+    //                  Promise.resolve(console.log("resolve 22222"))
+    //                      .then(function () {
+    //                         console.log(3)
+    //                       //  setTimeout(function(){
+    //                         console.log(33333333333)
+    //                       //  },0)
+    //                     })
+    //                      .then(function () {
+    //                         console.log(4);
+    //                     })
+    //                  console.log("resolve 7777")
+    //        })
+    //        .then(function () {
+    //             console.log(5);
+    //         })
+
+    Promise .resolve()
+        .then(console.log(11110))
+        .then(console.log(22222))
+
+
+    console.log("out promise ");
+    // // // Promise.resolve('aaa').then(
+    // // //     x => console.log(x)
+    // // // )
+    // // console.log(6);
+
+
+    //(嵌套的函数的执行顺序的问题)
+    // function foo1(){
+    //     console.log("fool start run ")
+    //     function foo2(){
+    //         console.log("foo2 start run ");   //foo2 不会执行
+    //     }
+    //     console.log("fool end run ")
+    //
+    // }
+    // foo1();
+    // //(嵌套的函数的执行顺序的问题)  加上return和（）
+    // function foo1(arg){
+    //     console.log("fool start run ")
+    //     return function foo2(){
+    //         console.log("foo2 start run ");   //foo2 不会执行
+    //         console.log(arg);//应该是现在foo2作用域找不到arg再往外层函数找
+    //     }
+    //     console.log("fool end run ")
+    //
+    // }
+    // foo1('bbbbbbb')();
+
+    //////探究回调函数的执行顺序
+    // function asyncFn1(callback) {
+    //     return function() {
+    //         console.log('asyncFn1 run');
+    //         setTimeout(function(){
+    //             callback();
+    //             console.log('asyncFn1 callback run end');
+    //         }, 5000);
+    //         console.log('asyncFn1 end');
+    //     }
+    // }
+    //
+    // function asyncFn2(callback) {
+    //     return function(){
+    //         console.log('asyncFn2 run');
+    //         setTimeout(function(){
+    //             callback();
+    //             console.log('asyncFn2 callback run end');
+    //         }, 5000);
+    //         console.log('asyncFn2 end');
+    //     }
+    // }
+    //
+    // function normalFn3() {
+    //     console.log('normalFn3 run');
+    // }
+    //
+    // asyncFn1(asyncFn2(normalFn3))()
+
+    // ////探究回调函数的执行顺序
+    // function asyncFn1(callback) {
+    //     console.log('asyncFn1 return ');
+    //     return function() {
+    //         console.log('asyncFn1 run');
+    //         setTimeout(function(){
+    //             callback();
+    //             console.log('asyncFn1 callback run end');
+    //         }, 5000);
+    //         console.log('asyncFn1 end');
+    //     }
+    // }
+    //
+    // function asyncFn2(callback) {
+    //     console.log('asyncFn2 return ');
+    //     return function(){
+    //         console.log('asyncFn2 run');
+    //         setTimeout(function(){
+    //             callback();
+    //             console.log('asyncFn2 callback run end');
+    //         }, 5000);
+    //         console.log('asyncFn2 end');
+    //     }
+    // }
+    //
+    // function normalFn3() {
+    //     console.log('normalFn3 run');
+    // }
+    //
+    // asyncFn1(asyncFn2(normalFn3))()
+    // //执行顺序 ：asyncFn2(normalFn3)执行后返回一个函数，该函数作为参数再传递给asyncFn1,用的到一个函数，
+    // //之后asyncFn1得到的返回函数结合后面的（）就开始执行函数了     另外返回的函数在执行时猜测会向
+    // //外层函数查找参数（作用域逐层向外查找）
+
+
+  //   //////探究回调函数的执行顺序    去掉return
+  //   function asyncFn1(callback) {
+  //           console.log('asyncFn1 run');
+  //       //    setTimeout(function(){
+  //               callback();
+  //               console.log('asyncFn1 callback run end');
+  //      //     }, 5000);
+  //           console.log('asyncFn1 end');
+  //   }
+  //   function asyncFn2(callback) {
+  //
+  //           console.log('asyncFn2 run');
+  //      //     setTimeout(function(){
+  //               callback();
+  //               console.log('asyncFn2 callback run end');
+  //     //      }, 5000);
+  //           console.log('asyncFn2 end');
+  //   }
+  //   function normalFn3() {
+  //       console.log('normalFn3 run');
+  //   }
+  // //  asyncFn1(asyncFn2(normalFn3))
+  //   asyncFn2(normalFn3)
+
+
+
+
+    // ///////promise的写法   （查看没有异步代码的情况）
+    // function asyncFn1() {
+    //     console.log('asyncFn1 run');
+    //     return new Promise(function(resolve, reject) {
+    //         //  setTimeout(function(){
+    //         resolve();
+    //         // }, 1000)
+    //     })
+    // }
+    //
+    // function asyncFn2() {
+    //     console.log('asyncFn2 run');
+    //     return new Promise(function(resolve, reject) {
+    //         //  setTimeout(function(){
+    //         resolve();
+    //         //   }, 1000)
+    //     })
+    // }
+    //
+    // function normalFn3() {
+    //     console.log('normalFn3 run');
+    // }
+    //
+    // asyncFn1().then(asyncFn2).then(normalFn3);
+
+    // ////////promise的写法   （查看有异步代码的情况）
+    // function asyncFn1() {
+    //     console.log('asyncFn1 run');
+    //     return new Promise(function(resolve, reject) {
+    //         console.log('asyncFn1  promise run');
+    //         setTimeout(function(){
+    //         resolve();
+    //         }, 3000)
+    //     })
+    // }
+    //
+    // function asyncFn2() {
+    //     console.log('asyncFn2 run');
+    //     return new Promise(function(resolve, reject) {
+    //         console.log('asyncFn2  promise run');
+    //         setTimeout(function(){
+    //         resolve();//////对照前面的例子，可以理解为resolve就是上面回调函数写法中的callBack()调用，
+    //                   ////resolve可以理解为执行了resolve就跳转到调用对应的promise的then方法
+    //           }, 3000)
+    //     })
+    // }
+    //
+    // function normalFn3() {
+    //     console.log('normalFn3 run');
+    // }
+    //
+    // asyncFn1().then(asyncFn2).then(normalFn3);
+    // console.log('normalFn3 run');
+
+</script>
+</html>
